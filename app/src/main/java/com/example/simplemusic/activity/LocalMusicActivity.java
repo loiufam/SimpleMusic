@@ -40,7 +40,7 @@ import org.litepal.LitePal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalMusicActivity extends AppCompatActivity implements View.OnClickListener{
+public class LocalMusicActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView musicCountView;
     private ListView musicListView;
@@ -49,6 +49,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
     private ImageView playingImgView;
     private ImageView btnPlayOrPause;
 
+    private List<List<Music>> localMusicListParent;
     private List<Music> localMusicList;
     private MusicAdapter adapter;
     private MusicService.MusicServiceBinder serviceBinder;
@@ -78,14 +79,14 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(final int i) {
                 final Music music = localMusicList.get(i);
-                final String[] items = new String[] {"收藏到我的音乐", "添加到播放列表", "删除"};
+                final String[] items = new String[]{"收藏到我的音乐", "添加到播放列表", "删除"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(LocalMusicActivity.this);
-                builder.setTitle(music.title+"-"+music.artist);
+                builder.setTitle(music.title + "-" + music.artist);
 
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
+                        switch (which) {
                             case 0:
                                 MainActivity.addMymusic(music);
                                 break;
@@ -97,7 +98,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                                 localMusicList.remove(i);
                                 LitePal.deleteAll(LocalMusic.class, "title=?", music.title);
                                 adapter.notifyDataSetChanged();
-                                musicCountView.setText("播放全部(共"+ localMusicList.size()+"首)");
+                                musicCountView.setText("播放全部(共" + localMusicList.size() + "首)");
                                 break;
                         }
                     }
@@ -109,7 +110,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.play_all:
                 serviceBinder.addPlayList(localMusicList);
                 break;
@@ -137,7 +138,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(updateTask != null && updateTask.getStatus() == AsyncTask.Status.RUNNING) {
+        if (updateTask != null && updateTask.getStatus() == AsyncTask.Status.RUNNING) {
             updateTask.cancel(true);
         }
         updateTask = null;
@@ -145,7 +146,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         unbindService(mServiceConnection);
     }
 
-    private void initActivity(){
+    private void initActivity() {
         //初始化控件
         ImageView btn_playAll = this.findViewById(R.id.play_all);
         musicCountView = this.findViewById(R.id.play_all_title);
@@ -179,7 +180,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
 
         //从数据库获取保存的本地音乐列表
         List<LocalMusic> list = LitePal.findAll(LocalMusic.class);
-        for (LocalMusic s:list){
+        for (LocalMusic s : list) {
             Music m = new Music(s.songUrl, s.title, s.artist, s.imgUrl, s.isOnlineMusic);
             localMusicList.add(m);
         }
@@ -188,11 +189,11 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         adapter = new MusicAdapter(this, R.layout.music_item, localMusicList);
         musicListView.setAdapter(adapter);
 
-        musicCountView.setText("播放全部(共"+ localMusicList.size()+"首)");
+        musicCountView.setText("播放全部(共" + localMusicList.size() + "首)");
     }
 
     // 显示当前正在播放的音乐
-    private void showPlayList(){
+    private void showPlayList() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         //设计对话框的显示标题
@@ -201,7 +202,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         //获取播放列表
         final List<Music> playingList = serviceBinder.getPlayingList();
 
-        if(playingList.size() > 0) {
+        if (playingList.size() > 0) {
             //播放列表有曲目，显示所有音乐
             final PlayingMusicAdapter playingAdapter = new PlayingMusicAdapter(this, R.layout.playinglist_item, playingList);
             builder.setAdapter(playingAdapter, new DialogInterface.OnClickListener() {
@@ -220,8 +221,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                     playingAdapter.notifyDataSetChanged();
                 }
             });
-        }
-        else {
+        } else {
             //播放列表没有曲目，显示没有音乐
             builder.setMessage("没有正在播放的音乐");
         }
@@ -247,19 +247,18 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
 
             Music item = serviceBinder.getCurrentMusic();
 
-            if (serviceBinder.isPlaying()){
+            if (serviceBinder.isPlaying()) {
                 // 如果正在播放音乐, 更新控制栏信息
                 btnPlayOrPause.setImageResource(R.drawable.zanting);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                if (item.isOnlineMusic){
+                if (item.isOnlineMusic) {
                     Glide.with(getApplicationContext())
                             .load(item.imgUrl)
                             .placeholder(R.drawable.defult_music_img)
                             .error(R.drawable.defult_music_img)
                             .into(playingImgView);
-                }
-                else {
+                } else {
                     ContentResolver resolver = getContentResolver();
                     Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
                     Glide.with(getApplicationContext())
@@ -268,20 +267,18 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                             .error(R.drawable.defult_music_img)
                             .into(playingImgView);
                 }
-            }
-            else if (item != null){
+            } else if (item != null) {
                 // 当前有可播放音乐但没有播放
                 btnPlayOrPause.setImageResource(R.drawable.bofang);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                if (item.isOnlineMusic){
+                if (item.isOnlineMusic) {
                     Glide.with(getApplicationContext())
                             .load(item.imgUrl)
                             .placeholder(R.drawable.defult_music_img)
                             .error(R.drawable.defult_music_img)
                             .into(playingImgView);
-                }
-                else {
+                } else {
                     ContentResolver resolver = getContentResolver();
                     Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
                     Glide.with(getApplicationContext())
@@ -292,6 +289,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         }
+
         @Override
         public void onServiceDisconnected(ComponentName name) {
             // 断开连接时注销监听器
@@ -303,7 +301,8 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
     private MusicService.OnStateChangeListenr listenr = new MusicService.OnStateChangeListenr() {
 
         @Override
-        public void onPlayProgressChange(long played, long duration) {}
+        public void onPlayProgressChange(long played, long duration) {
+        }
 
         @Override
         public void onPlay(Music item) {
@@ -312,14 +311,13 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
             btnPlayOrPause.setEnabled(true);
-            if (item.isOnlineMusic){
+            if (item.isOnlineMusic) {
                 Glide.with(getApplicationContext())
                         .load(item.imgUrl)
                         .placeholder(R.drawable.defult_music_img)
                         .error(R.drawable.defult_music_img)
                         .into(playingImgView);
-            }
-            else {
+            } else {
                 ContentResolver resolver = getContentResolver();
                 Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
                 Glide.with(getApplicationContext())
@@ -344,7 +342,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
 
         // 开始获取, 显示一个进度条
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             progressDialog = new ProgressDialog(LocalMusicActivity.this);
             progressDialog.setMessage("获取本地音乐中...");
             progressDialog.setCancelable(false);
@@ -376,7 +374,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                     long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
                     int albumId = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ID));
                     int isMusic = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.IS_MUSIC));
-                    if (isMusic != 0 && duration/(500*60) >= 2) {
+                    if (isMusic != 0 && duration / (500 * 60) >= 2) {
                         //再通过专辑Id组合出音乐封面的Uri地址
                         Uri musicPic = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId);
                         Music data = new Music(musicUri.toString(), title, artist, musicPic.toString(), false);
@@ -394,7 +392,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         protected void onProgressUpdate(Music... values) {
             Music data = values[0];
             //判断列表中是否已存在当前音乐
-            if (!localMusicList.contains(data)){
+            if (!localMusicList.contains(data)) {
                 //添加到列表和数据库
                 localMusicList.add(data);
                 LocalMusic music = new LocalMusic(data.songUrl, data.title, data.artist, data.imgUrl, data.isOnlineMusic);
@@ -403,7 +401,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             //刷新UI界面
             MusicAdapter adapter = (MusicAdapter) musicListView.getAdapter();
             adapter.notifyDataSetChanged();
-            musicCountView.setText("播放全部(共"+ localMusicList.size()+"首)");
+            musicCountView.setText("播放全部(共" + localMusicList.size() + "首)");
         }
 
         //任务结束, 关闭进度条
@@ -415,7 +413,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
