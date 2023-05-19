@@ -364,6 +364,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
 
             ContentResolver resolver = getContentResolver();
             Cursor cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, searchKey, null, null, null);
+
             if (cursor != null) {
                 while (cursor.moveToNext() && !isCancelled()) {
                     String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
@@ -374,6 +375,10 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                     long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
                     int albumId = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ID));
                     int isMusic = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.IS_MUSIC));
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
+                    System.out.println(id);
+                    System.out.println(musicUri);
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
                     if (isMusic != 0 && duration / (500 * 60) >= 2) {
                         //再通过专辑Id组合出音乐封面的Uri地址
                         Uri musicPic = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId);

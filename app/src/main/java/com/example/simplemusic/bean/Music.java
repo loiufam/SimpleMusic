@@ -26,4 +26,15 @@ public class Music {
         Music music = (Music) o;
         return Objects.equals(title, music.title);
     }
+
+    @Override
+    public String toString() {
+        return "Music{" +
+                "artist='" + artist + '\'' +
+                ", title='" + title + '\'' +
+                ", songUrl='" + songUrl + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
+                ", isOnlineMusic=" + isOnlineMusic +
+                '}';
+    }
 }

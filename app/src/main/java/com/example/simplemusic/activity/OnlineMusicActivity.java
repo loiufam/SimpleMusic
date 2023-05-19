@@ -32,6 +32,7 @@ import com.example.simplemusic.util.Utils;
 import com.example.simplemusic.service.MusicService;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -199,7 +200,9 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         adapter = new MusicAdapter(this, R.layout.music_item, onlinemusic_list);
         musicListView.setAdapter(adapter);
         musicCountView.setText("播放全部(共"+onlinemusic_list.size()+"首)");
-        getOlineMusic();
+        for (int x = 0; x < 10; x++){
+            getOlineMusic();
+        }
     }
 
 
@@ -353,8 +356,11 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
     // 获取在线音乐
     private void getOlineMusic() {
 
+//        Request request = new Request.Builder()
+//                .url("https://api.tjit.net/api/qqmusic/v2?key=bLbpLPiv29VUcwOO0yQbxN9a5c&id=765163652&type=toplist&topid=4&period=1")
+//                .build();
         Request request = new Request.Builder()
-                .url("https://api.itooi.cn/netease/songList?id=3778678&format=1")
+                .url("https://api.uomg.com/api/rand.music?sort=热歌榜&format=json")
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -370,32 +376,141 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
+                System.out.println(result);
                 try{
                     JSONObject obj = new JSONObject(result);
-                    JSONArray songs = new JSONArray(obj.getString("data"));
-
-                    for(int i=0; i<songs.length(); i++){
-                        JSONObject song = songs.getJSONObject(i);
-
-                        String id = song.getString("id");
-                        String songurl = "https://api.itooi.cn/netease/url?id=" + id + "&quality=128";
-                        String name = song.getString("name");
-                        String singer = song.getString("singer");
-                        String pic = "https://api.itooi.cn/netease/pic?id=" + id;
-
-                        //实例化一首音乐并发送到主线程更新
-                        Music music = new Music(songurl, name, singer, pic, true);
-                        Message message = mainHanlder.obtainMessage();
-                        message.what = 60;
-                        message.obj = music;
-                        mainHanlder.sendMessage(message);
-                        Thread.sleep(30);
-                    }
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    JSONObject song = obj.getJSONObject("data");
+                    String name = song.getString("name");
+                    System.out.println("成功获取name");
+                    String singer = song.getString("artistsname");
+                    System.out.println(singer);
+                    System.out.println("成功获取singer");
+                    String pic = song.getString("picurl");
+                    System.out.println(pic);
+                    System.out.println("成功获取cover");
+                    String songurl = song.getString("url");
+                    System.out.println("成功获取songurl");
+                    //实例化一首音乐并发送到主线程更新
+                    Music music = new Music(songurl, name, singer, pic, true);
+                    System.out.println("----成功获取music----");
+                    System.out.println(music);
+                    Message message = mainHanlder.obtainMessage();
+                    message.what = 60;
+                    message.obj = music;
+                    mainHanlder.sendMessage(message);
+                    Thread.sleep(30);
                 }
                 catch (Exception e){}
             }
         });
     }
+
+
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                String result = response.body().string();
+//                System.out.println(result);
+//                try{
+//                    JSONObject obj = new JSONObject(result);
+//                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//                    JSONObject test = obj.getJSONObject("data");
+//                    System.out.println(test);
+//                    JSONObject test2 = test.getJSONObject("info");
+//                    JSONArray songs= test2.getJSONArray("song");
+//                    System.out.println(songs);
+//                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//                    System.out.println(songs);
+//                    System.out.println(songs.length());
+//                    for(int i=0; i<songs.length(); i++){
+//                        System.out.println("进入循环");
+//                        JSONObject song = songs.getJSONObject(i);
+//                        String id = song.getString("songId");
+//                        System.out.println(id);
+//                        System.out.println("成功获取songId");
+//                        String name = song.getString("title");
+//                        System.out.println("成功获取name");
+//                        String singer = song.getString("singerName");
+//                        System.out.println(singer);
+//                        System.out.println("成功获取singer");
+//                        String pic = song.getString("cover");
+//                        System.out.println(pic);
+//                        System.out.println("成功获取cover");
+//                        String searchUrl = "https://api.tjit.net/api/qqmusic/v2?key=bLbpLPiv29VUcwOO0yQbxN9a5c&id=765163652&type=so&word=" + name;
+//                        String searchResult = client.newCall(new Request.Builder().url(searchUrl).build()).execute().body().string();
+//                        JSONObject searchJson = new JSONObject(searchResult);
+//                        JSONArray searchList = searchJson.getJSONObject("data").getJSONArray("list");
+//                        String media_mid = "";
+//                        if (searchList.length() > 0) {
+//                            JSONObject searchItem = searchList.getJSONObject(0);
+//                            media_mid = searchItem.getJSONObject("file").getString("media_mid");
+//                            System.out.println("mediaId: " + media_mid);
+//                        }
+//                        String songurl = "https://api.tjit.net/api/qqmusic/v2?key=bLbpLPiv29VUcwOO0yQbxN9a5c&type=url&mid="+ id +"&media_mid=" + media_mid;
+//                        System.out.println(songurl);
+//                        System.out.println("成功获取songurl");
+//
+//                        //实例化一首音乐并发送到主线程更新
+//                        Music music = new Music(songurl, name, singer, pic, true);
+//                        System.out.println("----成功获取music----");
+//                        System.out.println(music);
+//                        Message message = mainHanlder.obtainMessage();
+//                        message.what = 60;
+//                        message.obj = music;
+//                        mainHanlder.sendMessage(message);
+//                        Thread.sleep(30);
+//                    }
+//                }
+//                catch (Exception e){}
+//            }
+//        });
+//    }
+
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                String result = response.body().string();
+//                try{
+//                    JSONObject obj = new JSONObject(result);
+////                    JSONArray songs = new JSONArray(obj.getJSONObject("data").getJSONArray("list"));
+//                    JSONArray songs = obj.getJSONObject("data").getJSONArray("list");
+//                    System.out.println(songs);
+//                    System.out.println(songs.length());
+//                    for(int i=0; i<songs.length(); i++){
+//                        System.out.println("进入循环");
+//                        JSONObject song = songs.getJSONObject(i);
+//                        JSONObject file = song.getJSONObject("file");
+//                        String id = song.getString("mid");
+//                        System.out.println("成功获取mid");
+//                        String media_mid = file.getString("media_mid");
+//                        String songurl = "https://api.tjit.net/api/qqmusic/v2?key=bLbpLPiv29VUcwOO0yQbxN9a5c&type=url&mid="+ id +"&media_mid=" + media_mid;
+//                        System.out.println("成功获取songurl");
+//                        String name = song.getString("title");
+//                        System.out.println("成功获取name");
+//                        String singer = song.getString("author");
+//                        System.out.println("成功获取singer");
+//                        String pic = song.getString("pic");
+//                        System.out.println("成功获取pic");
+//                        System.out.println("成功获取song");
+//
+//                        //实例化一首音乐并发送到主线程更新
+//                        Music music = new Music(songurl, name, singer, pic, true);
+//                        System.out.println("----成功获取music----");
+//                        System.out.println(music);
+//                        Message message = mainHanlder.obtainMessage();
+//                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//                        message.what = 60;
+//                        message.obj = music;
+//                        mainHanlder.sendMessage(message);
+//                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//                        Thread.sleep(30);
+//                    }
+//                }
+//                catch (Exception e){}
+//            }
+//        });
+//    }
+
 
     // 返回按钮
     @Override
