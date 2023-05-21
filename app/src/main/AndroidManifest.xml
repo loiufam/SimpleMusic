@@ -19,20 +19,21 @@
         <activity android:name="com.example.simplemusic.activity.MainActivity"/>
         <activity android:name="com.example.simplemusic.activity.LocalMusicActivity" />
         <activity android:name="com.example.simplemusic.activity.OnlineMusicActivity" />
-        <activity android:name="com.example.simplemusic.activity.PlayerActivity" />
+        <activity android:name="com.example.simplemusic.activity.RegisterActivity" />
 
         <service
             android:name="com.example.simplemusic.service.MusicService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
-        <activity android:name="com.example.simplemusic.activity.StartActivity">
+        <activity android:name="com.example.simplemusic.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

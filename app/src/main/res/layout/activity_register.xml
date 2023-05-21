@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="com.example.simplemusic.activity.RegisterActivity">
+    <RelativeLayout
+        android:id="@+id/rl_registeractivity_top"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        >
+        <ImageView
+            android:id="@+id/tv_back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/go_back_selector"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:clickable="true"
+            android:onClick="onClick"
+            />
+
+        <TextView
+            android:id="@+id/tv_registeractivity_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="注册"
+            android:textColor="#fff"
+            android:textSize="20dp"
+            android:layout_toRightOf="@+id/tv_back"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_registeractivity_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/rl_registeractivity_top"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        >
+        <!-- 第一个文本编辑框  输入用户名 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_registeractivity_username"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="35dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/login_user_name_bg"
+                android:drawableLeft="@drawable/user_name_icon"
+                android:drawablePadding="10dp"
+                android:paddingLeft="8dp"
+                android:gravity="center_vertical"
+                android:hint="请输入用户名"
+                android:singleLine="true"
+                android:textColor="#000000"
+                android:textColorHint="#a3a3a3"
+                android:textSize="14sp"
+                />
+        </LinearLayout>
+        <!-- 第二个文本编辑框  输入密码 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/et_registeractivity_password1"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="35dp"
+                android:background="@drawable/login_psw_bg"
+                android:drawableLeft="@drawable/psw_icon"
+                android:drawablePadding="10dp"
+                android:paddingLeft="8dp"
+                android:gravity="center_vertical"
+                android:hint="请输入密码"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColor="#000000"
+                android:textColorHint="#a3a3a3"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal" />
+        <!-- 注册按钮 -->
+        <Button
+            android:id="@+id/bt_registeractivity_register"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/register_selector"
+            android:textColor="#fff"
+            android:text="注册"
+            android:onClick="onClick"
+            android:layout_marginTop="40dp"
+            />
+
+    </LinearLayout>
+</RelativeLayout>
